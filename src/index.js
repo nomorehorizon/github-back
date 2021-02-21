@@ -28,6 +28,28 @@ app.post('/repositories', (req, res) => {
   return res.json(repo);
 });
 
+app.put('/repositories/:id', (req, res) => {
+  const { id } = req.params;
+  const { title, url, techs } = req.body;
+
+  const repoIndex = repositories.findIndex(repo => repo.id === id);
+
+  if(repoIndex < 0) {
+    return res.status(400).json({ error: 'Project not found.'})
+  }
+
+  const repo = {
+    id,
+    title,
+    url,
+    techs,
+  };
+
+  repositories[repoIndex] = repo;
+
+  return res.json(repo);
+})
+
  app.listen(PORT, () => {
    console.log('👾  Back-end started!')
  });
