@@ -21,7 +21,13 @@ app.get('/repositories', (req, res) => {
 app.post('/repositories', (req, res) => {
   const { title, url, techs } = req.body;
 
-  const repo = { id: uuid(), title, url, techs }
+  const repo = { 
+    id: uuid(), 
+    title, 
+    url, 
+    techs,
+    likes: 0
+  }
 
   repositories.push(repo);
 
@@ -35,7 +41,7 @@ app.put('/repositories/:id', (req, res) => {
   const repoIndex = repositories.findIndex(repo => repo.id === id);
 
   if(repoIndex < 0) {
-    return res.status(400).json({ error: 'Project not found.'})
+    return res.status(400).json({ error: 'Repository not found.'})
   }
 
   const repo = {
@@ -43,6 +49,7 @@ app.put('/repositories/:id', (req, res) => {
     title,
     url,
     techs,
+    likes: repositories[repoIndex].likes,
   };
 
   repositories[repoIndex] = repo;
@@ -56,7 +63,7 @@ app.delete('/repositories/:id', (req, res) => {
   const repoIndex = repositories.findIndex(repo => repo.id === id);
 
   if(repoIndex < 0) {
-    return res.status(400).json({ error: 'Project not found' })
+    return res.status(400).json({ error: 'Repository does not exists' });
   }
 
   repositories.splice(repoIndex, 1);
@@ -64,6 +71,16 @@ app.delete('/repositories/:id', (req, res) => {
   return res.status(204).send();
 })
 
- app.listen(PORT, () => {
-   console.log('👾  Back-end started!')
- });
+app.post('/repositories/:id/like', (req, res) => {
+  const { id } = req.params;
+
+  const repoIndex = repositories.findIndex(repo => repo.id === id);
+
+  repositories[repoIndex].likes += 1;
+
+  return res.json(repositories[repoIndex]);
+});
+
+app.listen(PORT, () => {
+  console.log('👾  Back-end started!')
+});
