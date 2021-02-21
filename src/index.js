@@ -48,6 +48,20 @@ app.put('/repositories/:id', (req, res) => {
   repositories[repoIndex] = repo;
 
   return res.json(repo);
+});
+
+app.delete('/repositories/:id', (req, res) => {
+  const { id } = req.params;
+
+  const repoIndex = repositories.findIndex(repo => repo.id === id);
+
+  if(repoIndex < 0) {
+    return res.status(400).json({ error: 'Project not found' })
+  }
+
+  repositories.splice(repoIndex, 1);
+
+  return res.status(204).send();
 })
 
  app.listen(PORT, () => {
